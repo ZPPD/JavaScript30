@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Speech Detection</title>
+  </head>
+  <body>
+    <div>
+      <button data-lng="en" class="active">en</button>
+      <button data-lng="bg" class="bulgarian">bg</button>
+    </div>
+    <div class="words" contenteditable></div>
+
+    <script>
+      window.SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      // change language
+      const btns = document.querySelectorAll("button");
+
+      btns.forEach(btn =>
+        btn.addEventListener("click", function(e) {
+          btns.forEach(btn => btn.classList.remove("active"));
+          e.target.classList.add("active");
+          // console.log(e.target.dataset.lng);
+          const language = e.target.dataset.lng;
+          // recognition.lang = `${language}`;
+          const change = e.target;
+          recognition.lang = change.classList.contains("bulgarian")
+            ? "bg"
+            : "en-US";
+        })
+      );
+
+      const recognition = new SpeechRecognition();
+      recognition.interimResults = true;
+
+      // recognition.lang = btns.classList.contains("bulgarian") ? "bg" : "en-US";
+
+      let p = document.createElement("p");
+      const words = document.querySelector(".words");
+      words.appendChild(p);
+
+      recognition.addEventListener("result", e => {
+        // console.log(e.results);
+        const transcript = Array.from(e.results)
+          .map(result => result[0])
+          .map(result => result.transcript)
+          .join("");
+
+        p.textContent = transcript;
+        if (e.results[0].isFinal) {
+          p = document.createElement("p");
+          words.appendChild(p);
+        }
+
+        // console.log(transcript);
+      });
+
+      recognition.addEventListener("end", recognition.start);
+
+      recognition.start();
+    </script>
+
+    <style>
+      html {
+        font-size: 10px;
+      }
+      body {
+        background: #ffc600;
+        font-family: "helvetica neue";
+        font-weight: 200;
+        font-size: 20px;
+      }
+      .words {
+        max-width: 500px;
+        margin: 50px auto;
+        background: white;
+        border-radius: 5px;
+        box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.1);
+        padding: 1rem 2rem 1rem 5rem;
+        background: -webkit-gradient(
+            linear,
+            0 0,
+            0 100%,
+            from(#d9eaf3),
+            color-stop(4%, #fff)
+          )
+          0 4px;
+        background-size: 100% 3rem;
+        position: relative;
+        line-height: 3rem;
+      }
+
+      p {
+        margin: 0 0 3rem;
+      }
+      .words:before {
+        content: "";
+        position: absolute;
+        width: 4px;
+        top: 0;
+        left: 30px;
+        bottom: 0;
+        border: 1px solid;
+        border-color: transparent #efe4e4;
+      }
+
+      button {
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 0.7rem 1.5rem;
+        margin: 10px 1rem 0;
+        background: #fff;
+        border: 2px solid #798992;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .active {
+        border-color: rgb(243, 101, 101);
+      }
+    </style>
+  </body>
+</html>
