@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Understanding JavaScript's Capture</title>
+  </head>
+  <body class="bod">
+    <div class="one">
+      <div class="two">
+        <div class="three"></div>
+      </div>
+    </div>
+
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+      div {
+        width: 100%;
+        padding: 100px;
+      }
+      .one {
+        background: thistle;
+      }
+      .two {
+        background: mistyrose;
+      }
+      .three {
+        background: coral;
+      }
+    </style>
+
+    <button style="height:20px; width:20px; margin-top:10px"></button>
+    <script>
+      const divs = document.querySelectorAll("div");
+      const button = document.querySelector("button");
+
+      function logText(e) {
+        // event bubbling
+        console.log(this.classList.value);
+        // console.log(this);
+
+        // e.stopPropagation(); //stops bubbling
+      }
+
+      // document.body.addEventListener("click", logText);
+
+      // if we use capture:true the event is not triggered on the bubble up, it is triggered on the capture down, the default is false
+      // once:true listens for a click once and unbinds itself from the event, we can click as many times as we want, but only the first one will be executed, can use it in store checkouts or a like btn
+      divs.forEach(div =>
+        div.addEventListener("click", logText, { capture: false, once: true })
+      );
+
+      button.addEventListener(
+        "click",
+        () => {
+          console.log("Clicked!!!");
+        },
+        { once: true }
+      );
+    </script>
+  </body>
+</html>
